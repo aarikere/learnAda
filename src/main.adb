@@ -34,6 +34,9 @@ procedure main is
 
    acAng: AcuteAngleDegrees;
    ang: Degrees;
+   --SetF(1.0)
+   filtertmp:Float;
+
 
    type tmp is range -15..-10;
    type T2 is digits 2;
@@ -141,7 +144,12 @@ begin
    end loop;
 
    Put_Line(Pi'Image);
-
+   filtertmp := LowPassFilter.Filter(1.0,0.01);
+   Put_Line(filtertmp'Image);
+   filtertmp := LowPassFilter.Filter(1.0,0.01);
+   Put_Line(filtertmp'Image);
+   filtertmp := LowPassFilter.Filter(1.0,0.01);
+   Put_Line(filtertmp'Image);
 end main;
 
 

@@ -6,5 +6,5 @@ package LowPassFilter is
    
 private
    s: Float:=0.0;
-   f: Float;
+   f: Float:=1.0;
 end LowPassFilter;
