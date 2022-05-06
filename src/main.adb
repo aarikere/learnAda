@@ -7,6 +7,9 @@ with Operations;
 with Dates;       use Dates;
 with Ada.Numerics; use Ada.Numerics;
 with LowPassFilter; use LowPassFilter;
+with Simple_Sync_Pkg;
+with Ada.Real_Time; use Ada.Real_Time;
+with Delay_Aux_Pkg;
 
 procedure main is
    A, B, C: Integer;
@@ -62,6 +65,41 @@ procedure main is
      array (Index range <>) of My_Int;
 
    unconstMyIntVar:unconstMyInt(February..May):=(February=>1,May=>2,others=>3);
+
+  --   task T;
+  --
+  --  task body T is
+  --   begin
+  --      Put_Line ("in task T");
+  --   end T;
+   t:Float;
+
+   package Aux renames Delay_Aux_Pkg;
+
+   task Tk;
+
+   task body Tk is
+      Cycle : constant Time_Span :=
+        Milliseconds (1000);
+      Next  : Time := Aux.Get_Start_Time
+                      + Cycle;
+
+      Cnt   : Integer := 1;
+   begin
+      for I in 1 .. 5 loop
+         delay until Next;
+
+         Aux.Show_Elapsed_Time;
+         Aux.Computational_Intensive_App;
+
+         Next := Next + Cycle;
+
+         Put_Line ("Cycle # "
+                   & Integer'Image (Cnt));
+         Cnt  := Cnt + 1;
+      end loop;
+      Put_Line ("Finished time-drifting loop");
+   end Tk;
 
 begin
    A:=10;
@@ -125,6 +163,8 @@ begin
    end loop;
    New_Line;
 
+   Simple_Sync_Pkg.T.Start;
+
    for idx in 1..5 loop
       Put_Line(Integer'Image(tmpVar(idx)**2));
    end loop;
@@ -143,13 +183,15 @@ begin
       Put_Line(My_Int'Image(unconstMyIntVar(I)) & " at index " & I'Image);
    end loop;
 
+   Simple_Sync_Pkg.T.Continue;
+
    Put_Line(Pi'Image);
-   filtertmp := LowPassFilter.Filter(1.0,0.01);
-   Put_Line(filtertmp'Image);
-   filtertmp := LowPassFilter.Filter(1.0,0.01);
-   Put_Line(filtertmp'Image);
-   filtertmp := LowPassFilter.Filter(1.0,0.01);
-   Put_Line(filtertmp'Image);
+   for idx in 0..100 loop
+      filtertmp := LowPassFilter.Filter(1.0,0.01);
+      t := Float(idx)*0.01;
+      Put_Line(t'Image & " - " & filtertmp'Image);
+   end loop;
+
 end main;
 
 
