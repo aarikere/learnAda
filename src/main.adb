@@ -10,6 +10,7 @@ with LowPassFilter; use LowPassFilter;
 with Simple_Sync_Pkg;
 with Ada.Real_Time; use Ada.Real_Time;
 with Delay_Aux_Pkg;
+with SWC;
 
 procedure main is
    A, B, C: Integer;
@@ -190,7 +191,14 @@ begin
       filtertmp := LowPassFilter.Filter(1.0,0.01);
       t := Float(idx)*0.01;
       Put_Line(t'Image & " - " & filtertmp'Image);
+
    end loop;
+
+   for idx in 1..30 loop
+      SWC.app_tick;
+      Put_Line("Iteration " & idx'Image & ": Fib = " & SWC.u'Image);
+   end loop;
+
 
 end main;
 
